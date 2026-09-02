@@ -253,6 +253,64 @@ section h3 {
   background-color: var(--success);
 }
 
+/* Social sharing buttons */
+.share-buttons {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 6px 0;
+  flex-wrap: wrap;
+}
+
+.share-label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-right: 2px;
+}
+
+.share-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border-radius: 50%;
+  background-color: var(--border-light);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  line-height: 1;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.share-button:hover {
+  transform: translateY(-2px);
+  color: white;
+}
+
+.share-twitter:hover {
+  background-color: #000000;
+}
+
+.share-facebook:hover {
+  background-color: #1877f2;
+}
+
+.share-whatsapp:hover {
+  background-color: #25d366;
+}
+
+.share-email:hover {
+  background-color: #ea4335;
+}
+
+.share-copy:hover {
+  background-color: var(--primary);
+}
+
 /* Participants list */
 .participants-list {
   margin-top: 8px;
