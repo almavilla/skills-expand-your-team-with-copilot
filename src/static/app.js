@@ -528,6 +528,59 @@ document.addEventListener("DOMContentLoaded", () => {
         <span class="tooltip-text">Regular meetings at this time throughout the semester</span>
       </p>
       ${capacityIndicator}
+      <div class="share-buttons">
+        <span class="share-label">Share:</span>
+        <button
+          type="button"
+          class="share-button share-twitter tooltip"
+          data-platform="twitter"
+          data-activity="${name}"
+          aria-label="Share on X (Twitter)"
+        >
+          𝕏
+          <span class="tooltip-text">Share on X (Twitter)</span>
+        </button>
+        <button
+          type="button"
+          class="share-button share-facebook tooltip"
+          data-platform="facebook"
+          data-activity="${name}"
+          aria-label="Share on Facebook"
+        >
+          f
+          <span class="tooltip-text">Share on Facebook</span>
+        </button>
+        <button
+          type="button"
+          class="share-button share-whatsapp tooltip"
+          data-platform="whatsapp"
+          data-activity="${name}"
+          aria-label="Share on WhatsApp"
+        >
+          ✆
+          <span class="tooltip-text">Share on WhatsApp</span>
+        </button>
+        <button
+          type="button"
+          class="share-button share-email tooltip"
+          data-platform="email"
+          data-activity="${name}"
+          aria-label="Share via Email"
+        >
+          ✉
+          <span class="tooltip-text">Share via Email</span>
+        </button>
+        <button
+          type="button"
+          class="share-button share-copy tooltip"
+          data-platform="copy"
+          data-activity="${name}"
+          aria-label="Copy link"
+        >
+          🔗
+          <span class="tooltip-text">Copy link</span>
+        </button>
+      </div>
       <div class="participants-list">
         <h5>Current Participants:</h5>
         <ul>
@@ -577,6 +630,14 @@ document.addEventListener("DOMContentLoaded", () => {
       button.addEventListener("click", handleUnregister);
     });
 
+    // Add click handlers for share buttons
+    const shareButtons = activityCard.querySelectorAll(".share-button");
+    shareButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        shareActivity(button.dataset.platform, name, details);
+      });
+    });
+
     // Add click handler for register button (only when authenticated)
     if (currentUser) {
       const registerButton = activityCard.querySelector(".register-button");
@@ -588,6 +649,77 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     activitiesList.appendChild(activityCard);
+  }
+
+  // Build a shareable URL and message for an activity, then open the
+  // appropriate share dialog (or copy the link to the clipboard).
+  function shareActivity(platform, name, details) {
+    const shareUrl = `${window.location.origin}${
+      window.location.pathname
+    }?activity=${encodeURIComponent(name)}`;
+    const shareText = `Check out "${name}" at Mergington High School! ${details.description}`;
+
+    switch (platform) {
+      case "twitter": {
+        const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+          shareText
+        )}&url=${encodeURIComponent(shareUrl)}`;
+        window.open(twitterUrl, "_blank", "noopener,noreferrer");
+        break;
+      }
+      case "facebook": {
+        const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+          shareUrl
+        )}`;
+        window.open(facebookUrl, "_blank", "noopener,noreferrer");
+        break;
+      }
+      case "whatsapp": {
+        const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(
+          `${shareText} ${shareUrl}`
+        )}`;
+        window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+        break;
+      }
+      case "email": {
+        const subject = `Join me for ${name}!`;
+        const body = `${shareText}\n\n${shareUrl}`;
+        window.location.href = `mailto:?subject=${encodeURIComponent(
+          subject
+        )}&body=${encodeURIComponent(body)}`;
+        break;
+      }
+      case "copy": {
+        copyToClipboard(shareUrl);
+        break;
+      }
+      default:
+        break;
+    }
+  }
+
+  // Copy the given text to the clipboard, with a fallback for browsers
+  // that don't support the async Clipboard API.
+  function copyToClipboard(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard
+        .writeText(text)
+        .then(() => showMessage("Link copied to clipboard!", "success"))
+        .catch(() => showMessage("Failed to copy link.", "error"));
+    } else {
+      const tempInput = document.createElement("input");
+      tempInput.value = text;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      try {
+        document.execCommand("copy");
+        showMessage("Link copied to clipboard!", "success");
+      } catch (error) {
+        showMessage("Failed to copy link.", "error");
+      } finally {
+        document.body.removeChild(tempInput);
+      }
+    }
   }
 
   // Event listeners for search and filter
